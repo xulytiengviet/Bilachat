@@ -1,0 +1,24 @@
+name: BilaChat CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax check
+        run: |
+          node --check assets/cvnss-converter.js
+          node --check assets/core.js
+          node --check assets/engine.js
+          node --check app.js
+          node --check tests/core.test.cjs
+      - name: Converter and conversation tests
+        run: node tests/core.test.cjs
