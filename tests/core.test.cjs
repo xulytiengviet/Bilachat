@@ -1,0 +1,32 @@
+"use strict";
+const assert=require("node:assert/strict");
+const C=require("../assets/core.js");
+const cv=require("../assets/cvnss-converter.js");
+assert.equal(cv.VERSION,"5.0.0-audit-safe");
+assert.equal(cv.selfTest().ok,true,"CVNSS converter internal audit");
+assert.equal(cv.fromCqn("tiếng Việt").cvss.length>0,true);
+const thread=C.newThread();
+const u1=C.addNode(thread,"user","Xin chào",null);
+const a1=C.addNode(thread,"assistant","Chào bạn",u1.id);
+const u2=C.addNode(thread,"user","Một",a1.id);
+const a2=C.addNode(thread,"assistant","Hai",u2.id);
+assert.deepEqual(C.pathTo(thread,a2.id).map(n=>n.role),["user","assistant","user","assistant"]);
+const a3=C.addNode(thread,"assistant","Ba",u2.id);
+assert.equal(C.siblings(thread,a3).length,2);
+assert.equal(C.latestLeaf(thread,a1.id),a3.id);
+const edit=C.addNode(thread,"user","Chào lần nữa",null);
+assert.equal(C.siblings(thread,edit).length,2);
+assert.equal(C.requestMessages(thread,edit.id).at(-1).content,"Chào lần nữa");
+const normalized=C.normalizeThread(JSON.parse(JSON.stringify(thread)));
+assert.equal(normalized.nodes.length,6);
+assert.equal(C.endpoint("https://api.deepseek.com").endsWith("/chat/completions"),true);
+assert.throws(()=>C.endpoint("http://unknown.example/v1"),/HTTPS/);
+const frame=C.parseSSEFrame('data: {"choices":[{"delta":{"content":"xin"}}]}');
+assert.equal(frame.data.choices[0].delta.content,"xin");
+async function runSSE(){
+ const parts=["data: {\"choices\":[{\"delta\":{\"content\":\"xin\"}}]}\n\n","data: {\"choices\":[{\"delta\":{\"content\":\" chào\"}}]}\n\n","data: [DONE]\n\n"];
+ const stream=new ReadableStream({start(c){const e=new TextEncoder();for(const s of parts)c.enqueue(e.encode(s));c.close();}});
+ const result=[];for await(const r of C.parseSSE(stream))result.push(r);
+ assert.equal(result.length,3);assert.equal(result[1].data.choices[0].delta.content," chào");assert.equal(result[2].done,true);
+}
+runSSE().then(()=>console.log("BilaChat core + CVNSS checks passed")).catch(e=>{console.error(e);process.exitCode=1;});
