@@ -7,7 +7,7 @@ BilaChat là ứng dụng AI chat chạy tĩnh trên GitHub Pages, giao diện s
 ## Chạy nhanh
 
 1. Mở `index.html` qua local HTTP server, ví dụ `python -m http.server 8080`, hoặc bật GitHub Pages trong **Settings → Pages → Deploy from a branch → main / root**.
-2. Mở **Cài đặt** và nhập endpoint Chat Completions có hỗ trợ CORS, model, API key. Mặc định: `https://api.deepseek.com/chat/completions`, model `deepseek-chat`.
+2. Mở **Cài đặt** và nhập endpoint Chat Completions có hỗ trợ CORS, model, API key. Mặc định: `https://api.deepseek.com/chat/completions`, model `deepseek-flash`.
 3. Chọn **Thử kết nối** rồi gửi tin. API key chỉ lưu trong bộ nhớ phiên (`sessionStorage`) mặc định; tùy chọn nhớ khóa lưu tại `localStorage` là **không an toàn trên thiết bị dùng chung**. Không đặt khóa trong GitHub.
 4. Các khả năng tìm kiếm web, đọc liên kết, PDF, microphone và kết xuất phụ thuộc API/ quyền truy cập/ CDN; lỗi được hiển thị rõ ràng, không giả lập kết quả.
 
@@ -19,7 +19,7 @@ BilaChat là ứng dụng AI chat chạy tĩnh trên GitHub Pages, giao diện s
 - Upload ảnh/text/PDF, kéo thả/dán, nhận dạng lời nói qua Web Speech API, tổng hợp giọng nói bằng speechSynthesis.
 - Markdown + DOMPurify, syntax highlighting, KaTeX, Mermaid, ZIP import/export (không kèm API key).
 - Chủ đề sáng/tối, giao diện Việt/English/中文; **đầu ra AI luôn được yêu cầu bằng tiếng Việt Unicode**.
-- Tìm kiếm web qua Tavily (tự nhập key) và đọc URL qua Jina Reader (tùy chọn, chuyển URL tới bên thứ ba). Các chức năng này cần dịch vụ cho phép CORS.
+- Tìm kiếm web qua công cụ tích hợp DeepSeek hoặc Tavily (tự nhập key cho các nhà cung cấp khác) và đọc URL qua Jina Reader (tùy chọn, chuyển URL tới bên thứ ba). Các chức năng này cần dịch vụ cho phép CORS.
 
 ## Cảnh báo quan trọng
 
