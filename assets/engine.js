@@ -39,6 +39,7 @@ function requestPayload(thread,userId,settings,deep,sources,opts){
  }
  const data={model:settings.model,messages,stream:true,max_tokens:Math.min(32768,Math.max(64,Number(settings.maxTokens)||4096)),temperature:Math.min(2,Math.max(0,Number(settings.temperature)||0))};
  if(settings.provider==="deepseek"){
+  data.safety_check={level:"high"};
   data.thinking={type:deep?"enabled":"disabled"};
   const nativeTools=[];
   if(opts?.searching)nativeTools.push({type:"deepseek_web_search"});
