@@ -7,9 +7,9 @@ const $=id=>document.getElementById(id);
 const K_THREADS="bilachat_v2_threads",K_SETTINGS="bilachat_v2_settings",K_CURRENT="bilachat_v2_current",K_API="bilachat_v2_api_key",K_SEARCH="bilachat_v2_search_key";
 const defaults={provider:"deepseek",url:"https://api.deepseek.com/chat/completions",model:"deepseek-flash",temperature:0.7,maxTokens:4096,rememberKey:false,readerConsent:false,theme:"light",locale:"vi"};
 const words={
-vi:{newChat:"Cuộc trò chuyện mới",searchChats:"Tìm cuộc trò chuyện...",recent:"Gần đây",export:"Xuất dữ liệu ZIP",import:"Nhập dữ liệu ZIP",settings:"Cài đặt & API",notConnected:"Chưa cấu hình",greeting:"Hôm nay bạn cần BilaChat giúp gì?",tagline:"Trò chuyện với AI bằng tiếng Việt · CVNSS4.0 xử lý · Unicode hiển thị",prompt1:"Giải thích CVNSS4.0",prompt2:"Viết mã Python",prompt3:"Phân tích kiến trúc AI",prompt4:"Soạn thảo nội dung",compose:"Nhắn tin cho BilaChat...",attach:"Đính kèm",thinking:"Suy nghĩ sâu",webSearch:"Tìm kiếm",voice:"Giọng nói",disclaimer:"BilaChat có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.",settingsTitle:"Cài đặt BilaChat",settingsSubtitle:"API thuộc quyền kiểm soát của bạn, không lưu trên GitHub.",configured:"Đã cấu hình",processing:"Đang xử lý",done:"Hoàn tất",thinkingTitle:"Nhật ký xử lý · CVNSS4.0",sources:"Nguồn tham khảo",edit:"Sửa câu hỏi",regenerate:"Tạo lại",copy:"Sao chép",speak:"Đọc to"},
-en:{newChat:"New chat",searchChats:"Search chats...",recent:"Recent",export:"Export ZIP",import:"Import ZIP",settings:"Settings & API",notConnected:"Not configured",greeting:"How can BilaChat help today?",tagline:"Vietnamese AI · CVNSS4.0 processing · Unicode responses",prompt1:"Explore CVNSS4.0",prompt2:"Write Python code",prompt3:"Analyze AI architecture",prompt4:"Draft a message",compose:"Message BilaChat...",attach:"Attach",thinking:"Deep think",webSearch:"Search",voice:"Voice",disclaimer:"BilaChat can make mistakes. Verify important information.",settingsTitle:"BilaChat Settings",settingsSubtitle:"Your API, your control. No credentials on GitHub.",configured:"Configured",processing:"Generating",done:"Done",thinkingTitle:"Processing trace · CVNSS4.0",sources:"References",edit:"Edit",regenerate:"Regenerate",copy:"Copy",speak:"Read aloud"},
-zh:{newChat:"新对话",searchChats:"搜索对话...",recent:"最近",export:"导出 ZIP",import:"导入 ZIP",settings:"设置与 API",notConnected:"未配置",greeting:"今天需要 BilaChat 帮什么？",tagline:"越南语 AI · CVNSS4.0 处理 · Unicode 回答",prompt1:"了解 CVNSS4.0",prompt2:"编写 Python",prompt3:"分析 AI 架构",prompt4:"撰写内容",compose:"发送消息给 BilaChat...",attach:"附件",thinking:"深度思考",webSearch:"搜索",voice:"语音",disclaimer:"BilaChat 可能出错，请核实重要信息。",settingsTitle:"BilaChat 设置",settingsSubtitle:"API 由您控制，不保存在 GitHub。",configured:"已配置",processing:"处理中",done:"已完成",thinkingTitle:"处理日志 · CVNSS4.0",sources:"参考来源",edit:"编辑",regenerate:"重新生成",copy:"复制",speak:"朗读"}};
+vi:{newChat:"Cuộc trò chuyện mới",searchChats:"Tìm cuộc trò chuyện...",recent:"Gần đây",export:"Xuất dữ liệu ZIP",import:"Nhập dữ liệu ZIP",settings:"Cài đặt & API",notConnected:"Chưa cấu hình",greeting:"Hôm nay bạn cần BilaChat giúp gì?",tagline:"Trò chuyện với AI bằng tiếng Việt · CVNSS4.0 xử lý · Unicode hiển thị",prompt1:"Giải thích CVNSS4.0",prompt2:"Viết mã Python",prompt3:"Phân tích kiến trúc AI",prompt4:"Soạn thảo nội dung",compose:"Nhắn tin cho BilaChat...",attach:"Đính kèm",thinking:"Suy nghĩ sâu",webSearch:"Tìm kiếm",voice:"Giọng nói",disclaimer:"BilaChat có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.",settingsTitle:"Cài đặt BilaChat",settingsSubtitle:"API thuộc quyền kiểm soát của bạn, không lưu trên GitHub.",configured:"Đã nhập khóa",processing:"Đang xử lý",done:"Hoàn tất",thinkingTitle:"Nhật ký xử lý · CVNSS4.0",sources:"Nguồn tham khảo",edit:"Sửa câu hỏi",regenerate:"Tạo lại",copy:"Sao chép",speak:"Đọc to"},
+en:{newChat:"New chat",searchChats:"Search chats...",recent:"Recent",export:"Export ZIP",import:"Import ZIP",settings:"Settings & API",notConnected:"Not configured",greeting:"How can BilaChat help today?",tagline:"Vietnamese AI · CVNSS4.0 processing · Unicode responses",prompt1:"Explore CVNSS4.0",prompt2:"Write Python code",prompt3:"Analyze AI architecture",prompt4:"Draft a message",compose:"Message BilaChat...",attach:"Attach",thinking:"Deep think",webSearch:"Search",voice:"Voice",disclaimer:"BilaChat can make mistakes. Verify important information.",settingsTitle:"BilaChat Settings",settingsSubtitle:"Your API, your control. No credentials on GitHub.",configured:"Key entered",processing:"Generating",done:"Done",thinkingTitle:"Processing trace · CVNSS4.0",sources:"References",edit:"Edit",regenerate:"Regenerate",copy:"Copy",speak:"Read aloud"},
+zh:{newChat:"新对话",searchChats:"搜索对话...",recent:"最近",export:"导出 ZIP",import:"导入 ZIP",settings:"设置与 API",notConnected:"未配置",greeting:"今天需要 BilaChat 帮什么？",tagline:"越南语 AI · CVNSS4.0 处理 · Unicode 回答",prompt1:"了解 CVNSS4.0",prompt2:"编写 Python",prompt3:"分析 AI 架构",prompt4:"撰写内容",compose:"发送消息给 BilaChat...",attach:"附件",thinking:"深度思考",webSearch:"搜索",voice:"语音",disclaimer:"BilaChat 可能出错，请核实重要信息。",settingsTitle:"BilaChat 设置",settingsSubtitle:"API 由您控制，不保存在 GitHub。",configured:"已输入密钥",processing:"处理中",done:"已完成",thinkingTitle:"处理日志 · CVNSS4.0",sources:"参考来源",edit:"编辑",regenerate:"重新生成",copy:"复制",speak:"朗读"}};
 function parse(v,f){try{return JSON.parse(v)||f}catch(_){return f}}
 let settings=Object.assign({},defaults,parse(localStorage.getItem(K_SETTINGS),{}));
 let apiKey=(settings.rememberKey?localStorage.getItem(K_API):sessionStorage.getItem(K_API))||"";
@@ -118,11 +118,36 @@ function saveForm(e){
  e.preventDefault();try{const v=formValues();v.url=C.endpoint(v.url);if(!v.model)throw Error("Model ID không được trống.");settings=Object.assign({},settings,v);apiKey=$("apiKey").value.trim();searchKey=$("searchKey").value.trim();storeSettings();$("settingsDialog").close();render();toast("Đã lưu cài đặt trong trình duyệt.");}catch(e){$("testResult").textContent=e.message;}
 }
 async function testApi(){
- const old=settings,key=apiKey;try{
-  settings=Object.assign({},settings,formValues());apiKey=$("apiKey").value.trim();$("testResult").textContent="Đang thử kết nối...";
-  const ac=new AbortController();const timeout=setTimeout(()=>ac.abort(),15000);
-  try{const r=await E.post({model:settings.model,messages:[{role:"user",content:"Chỉ trả lời OK"}],stream:false,max_tokens:20},{settings,apiKey,signal:ac.signal});await r.text();$("testResult").textContent="✓ API HTTP "+r.status+" (chưa kiểm tra chất lượng nội dung).";}finally{clearTimeout(timeout);}
- }catch(e){$("testResult").textContent="✗ "+String(e.message).slice(0,250);}finally{settings=old;apiKey=key;}
+ const old=settings,key=apiKey;
+ const result=$("testResult"),ac=new AbortController();
+ const timeout=setTimeout(()=>ac.abort(),18000);
+ try{
+  settings=Object.assign({},settings,formValues());apiKey=$("apiKey").value.trim();
+  settings.url=C.endpoint(settings.url);
+  if(!apiKey)throw Error("Chưa nhập API key.");
+  result.textContent="Đang kiểm tra khóa, số dư và model ...";
+  let balanceInfo="";
+  const official=settings.provider==="deepseek"&&new URL(settings.url).hostname==="api.deepseek.com";
+  if(official){
+   try{
+    const r=await fetch("https://api.deepseek.com/user/balance",{method:"GET",headers:{"Authorization":"Bearer "+apiKey},cache:"no-store",signal:ac.signal});
+    if(r.ok){
+     const j=await r.json();
+     const balances=(j.balance_infos||[]).map(x=>x.total_balance+" "+x.currency).join(", ");
+     balanceInfo="Số dư API: "+(j.is_available?"khả dụng":"không đủ")+(balances?" ("+balances+")":"")+". ";
+    }else balanceInfo="Kiểm tra số dư: HTTP "+r.status+". ";
+   }catch(e){if(e.name==="AbortError")throw e;balanceInfo="Không đọc được số dư (CORS/mạng). ";}
+  }
+  const r=await E.post({model:settings.model,messages:[{role:"user",content:"Chỉ trả lời OK bằng tiếng Việt."}],stream:false,max_tokens:40,thinking:{type:"disabled"}},{settings,apiKey,signal:ac.signal});
+  const response=await r.json();
+  if(response.error)throw Error(response.error.message||"API trả về lỗi.");
+  const message=String(response.choices?.[0]?.message?.content||"");
+  if(!message.trim())throw Error("API trả về HTTP 200 nhưng câu trả lời trống.");
+  result.textContent="✓ "+balanceInfo+"API và model phản hồi thành công: "+message.slice(0,100);
+ }catch(e){
+  const hint=e.status===401?" Khóa không hợp lệ hoặc đã thu hồi.":e.status===402?" Tài khoản không đủ số dư.":e.status===429?" Đang vượt giới hạn truy cập.":"";
+  result.textContent="✗ "+String(e.message).slice(0,240)+hint;
+ }finally{clearTimeout(timeout);settings=old;apiKey=key;}
 }
 async function exportZip(){
  if(!window.JSZip)return toast("Không thể tải JSZip.");const z=new JSZip();z.file("chats.json",JSON.stringify({schema:2,exportedAt:new Date().toISOString(),conversations:threads},null,2));z.file("README.txt","BilaChat 2.0. Contains conversation history only. No API keys or settings are included.");
