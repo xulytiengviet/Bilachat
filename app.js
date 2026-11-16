@@ -112,7 +112,7 @@ async function attach(files){for(const f of Array.from(files||[]).slice(0,8)){tr
 function formValues(){return{provider:$("provider").value,url:$("apiUrl").value.trim(),model:$("modelId").value.trim(),temperature:Number($("temperature").value),maxTokens:Number($("maxTokens").value),rememberKey:$("rememberKey").checked,readerConsent:$("readerConsent").checked,theme:$("themeSelect").value,locale:$("localeSelect").value};}
 function openSettings(){
  for(const [id,val] of Object.entries({provider:settings.provider,apiUrl:settings.url,modelId:settings.model,apiKey,temperature:settings.temperature,maxTokens:settings.maxTokens,searchKey,themeSelect:settings.theme,localeSelect:settings.locale}))$(id).value=val;
- $("rememberKey").checked=!!settings.rememberKey;$("readerConsent").checked=!!settings.readerConsent;$("testResult").textContent="";$("settingsDialog").showModal();closeNav();
+ $("rememberKey").checked=!!settings.rememberKey;$("readerConsent").checked=!!settings.readerConsent;$("testResult").textContent="";$("apiKey").type="password";$("toggleKey").textContent="Hiện";$("settingsDialog").showModal();closeNav();
 }
 function saveForm(e){
  e.preventDefault();try{const v=formValues();v.url=C.endpoint(v.url);if(!v.model)throw Error("Model ID không được trống.");settings=Object.assign({},settings,v);apiKey=$("apiKey").value.trim();searchKey=$("searchKey").value.trim();storeSettings();$("settingsDialog").close();render();toast("Đã lưu cài đặt trong trình duyệt.");}catch(e){$("testResult").textContent=e.message;}
