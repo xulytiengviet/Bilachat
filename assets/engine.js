@@ -58,26 +58,52 @@ async function post(payload,opts){
  if(!res.ok){let err=(await res.text().catch(()=>"")).slice(0,600);if(key)err=err.split(key).join("[REDACTED]");const e=new Error("API HTTP "+res.status+": "+err);e.status=res.status;throw e;}
  return res;
 }
-async function consume(res,assistant,opts){
+async function consume(res,assistant,opts={}){
+ // DeepSeek supplies reasoning_content separately from the Unicode answer.
+ // Accumulate complete text before CVNSS conversion because token boundaries can
+ // cut Vietnamese syllables and accents in the middle.
+ const cv=root.CVNSSConverter;
+ let rawReasoning="", lastReasoningPaint=0;
+ assistant.reasoningCvss=assistant.reasoningCvss||"";
+ assistant.reasoningReceived=!!assistant.reasoningReceived;
+ const flushReasoning=(force=false)=>{
+  if(!rawReasoning)return;
+  if(!force&&Date.now()-lastReasoningPaint<90)return;
+  lastReasoningPaint=Date.now();
+  if(!cv?.fromCqn){assistant.reasoningError="Không tải được bộ chuyển đổi CVNSS4.0.";opts.onReasoning?.(assistant);return;}
+  try{assistant.reasoningCvss=cv.fromCqn(rawReasoning.normalize("NFC")).cvss.slice(0,120000);}
+  catch(_){assistant.reasoningError="Không chuyển được nội dung reasoning sang CVNSS4.0.";}
+  opts.onReasoning?.(assistant);
+ };
+ const collectReasoning=value=>{
+  if(typeof value!=="string"||!value.length)return;
+  assistant.reasoningReceived=true;
+  if(rawReasoning.length<100000)rawReasoning+=value.slice(0,100000-rawReasoning.length);
+  else assistant.reasoningTruncated=true;
+  flushReasoning(false);
+ };
  const addSource=item=>{const u=Core.safeUrl(item?.url||item?.url_citation?.url);if(!u)return;if(!assistant.sources.some(x=>x.url===u))assistant.sources.push({title:String(item?.title||item?.url_citation?.title||u).slice(0,160),url:u});};
  const ingest=msg=>{
   for(const a of (msg?.annotations||[]))addSource(a.url_citation||a);
   for(const step of (msg?.server_tool_calls||[]))for(const call of (step.calls||[])){for(const source of (call.sources||[]))addSource(source);if(call.page)addSource(call.page);}
  };
  if((res.headers.get("content-type")||"").includes("application/json")){
-  const j=await res.json();if(j.error)throw Error(String(j.error.message||"API response error"));const message=j.choices?.[0]?.message||{};ingest(message);assistant.content=String(message.content||j.output_text||"");opts.onToken?.(assistant);return;
+  const j=await res.json();if(j.error)throw Error(String(j.error.message||"API response error"));const message=j.choices?.[0]?.message||{};ingest(message);collectReasoning(message.reasoning_content);flushReasoning(true);assistant.content=String(message.content||j.output_text||"").normalize("NFC");opts.onToken?.(assistant);return;
  }
  for await(const event of Core.parseSSE(res.body)){
   if(event.done)break;const j=event.data;if(j.error)throw Error(String(j.error.message||"Lỗi khi streaming"));
   const choice=j.choices?.[0]||{};const delta=choice.delta||choice.message||{};
-  ingest(delta);const toolEvent=choice.server_tool_event;
+  ingest(delta);collectReasoning(delta.reasoning_content);const toolEvent=choice.server_tool_event;
   if(toolEvent?.type==="call_completed"){for(const source of (toolEvent.call?.sources||[]))addSource(source);if(toolEvent.call?.page)addSource(toolEvent.call.page);}
-  if(toolEvent?.type==="call_started")makeTrace(opts.onTrace,"Mô hình đang dùng công cụ web được cấp phép.");
+  if(toolEvent?.type==="call_started")makeTrace(opts.onTrace,"DeepSeek bắt đầu gọi công cụ web.");
+  if(toolEvent?.type==="call_completed")makeTrace(opts.onTrace,"DeepSeek hoàn tất gọi công cụ web.");
+  if(toolEvent?.type==="step_reasoning_done"){if(rawReasoning)rawReasoning+="\n\n";flushReasoning(true);}
   if(typeof delta.content==="string")assistant.content+=delta.content;
   else if(Array.isArray(delta.content))assistant.content+=delta.content.filter(v=>v.type==="text").map(v=>v.text||"").join("");
   else if(typeof j.output_text==="string")assistant.content+=j.output_text;
   opts.onToken?.(assistant);
  }
+ flushReasoning(true);
  assistant.content=assistant.content.normalize("NFC");
 }
 async function generate(thread,userId,assistant,opts){
