@@ -7,6 +7,7 @@ function makeTrace(onTrace,s){if(onTrace)onTrace(s);}
 function apiHeaders(s,key){const h={"Authorization":"Bearer "+key,"Content-Type":"application/json","Accept":"text/event-stream,application/json"};if(s.provider==="openrouter")h["X-Title"]="BilaChat";return h;}
 async function searchSources(question,opts){
  const sources=[];const signal=opts.signal;const trace=s=>makeTrace(opts.onTrace,s);
+ if(opts.settings.provider==="deepseek"&&(opts.searching||opts.readerConsent)){trace("Ưu tiên công cụ tìm kiếm và đọc URL tích hợp của DeepSeek API.");return sources;}
  if(opts.searching){
   if(!opts.searchKey){trace("Chưa cấu hình Tavily API key, bỏ qua tìm kiếm.");opts.onWarning?.("Bật Tìm kiếm cần thêm Tavily API key trong Cài đặt.");}
   else try{
@@ -29,7 +30,7 @@ async function searchSources(question,opts){
  }
  return sources.slice(0,7);
 }
-function requestPayload(thread,userId,settings,deep,sources){
+function requestPayload(thread,userId,settings,deep,sources,opts){
  const messages=[{role:"system",content:SYSTEM},...Core.requestMessages(thread,userId)];
  if(sources.length){
   const reference=sources.map((s,i)=>"["+String(i+1)+"] "+s.title+"\n"+s.url+"\n"+s.content).join("\n\n");
@@ -37,7 +38,14 @@ function requestPayload(thread,userId,settings,deep,sources){
   const last=messages[messages.length-1];if(typeof last.content==="string")last.content+=supplement;else last.content[0].text+=supplement;
  }
  const data={model:settings.model,messages,stream:true,max_tokens:Math.min(32768,Math.max(64,Number(settings.maxTokens)||4096)),temperature:Math.min(2,Math.max(0,Number(settings.temperature)||0))};
- if(deep){if(settings.provider==="deepseek")data.thinking={type:"enabled"};else if(settings.provider==="openrouter")data.reasoning={enabled:true};else data.reasoning_effort="high";}
+ if(settings.provider==="deepseek"){
+  data.thinking={type:deep?"enabled":"disabled"};
+  const nativeTools=[];
+  if(opts?.searching)nativeTools.push({type:"deepseek_web_search"});
+  const q=thread.nodes.find(n=>n.id===userId)?.content||"";
+  if(opts?.readerConsent&&/https?:\/\/\S+/i.test(q))nativeTools.push({type:"deepseek_read_url"});
+  if(nativeTools.length)data.tools=nativeTools;
+ }else if(deep){if(settings.provider==="openrouter")data.reasoning={enabled:true};else data.reasoning_effort="high";}
  return data;
 }
 async function post(payload,opts){
@@ -50,12 +58,20 @@ async function post(payload,opts){
  return res;
 }
 async function consume(res,assistant,opts){
+ const addSource=item=>{const u=Core.safeUrl(item?.url||item?.url_citation?.url);if(!u)return;if(!assistant.sources.some(x=>x.url===u))assistant.sources.push({title:String(item?.title||item?.url_citation?.title||u).slice(0,160),url:u});};
+ const ingest=msg=>{
+  for(const a of (msg?.annotations||[]))addSource(a.url_citation||a);
+  for(const step of (msg?.server_tool_calls||[]))for(const call of (step.calls||[])){for(const source of (call.sources||[]))addSource(source);if(call.page)addSource(call.page);}
+ };
  if((res.headers.get("content-type")||"").includes("application/json")){
-  const j=await res.json();assistant.content=String(j.choices?.[0]?.message?.content||j.output_text||"");opts.onToken?.(assistant);return;
+  const j=await res.json();const message=j.choices?.[0]?.message||{};ingest(message);assistant.content=String(message.content||j.output_text||"");opts.onToken?.(assistant);return;
  }
  for await(const event of Core.parseSSE(res.body)){
   if(event.done)break;const j=event.data;if(j.error)throw Error(String(j.error.message||"Lỗi khi streaming"));
-  const delta=j.choices?.[0]?.delta||j.choices?.[0]?.message||{};
+  const choice=j.choices?.[0]||{};const delta=choice.delta||choice.message||{};
+  ingest(delta);const event=choice.server_tool_event;
+  if(event?.type==="call_completed"){for(const source of (event.call?.sources||[]))addSource(source);if(event.call?.page)addSource(event.call.page);}
+  if(event?.type==="call_started")makeTrace(opts.onTrace,"Mô hình đang dùng công cụ web được cấp phép.");
   if(typeof delta.content==="string")assistant.content+=delta.content;
   else if(Array.isArray(delta.content))assistant.content+=delta.content.filter(v=>v.type==="text").map(v=>v.text||"").join("");
   else if(typeof j.output_text==="string")assistant.content+=j.output_text;
@@ -68,11 +84,11 @@ async function generate(thread,userId,assistant,opts){
  let sources=await searchSources(thread.nodes.find(n=>n.id===userId)?.content||"",opts);
  assistant.sources=sources.map(s=>({title:s.title,url:s.url}));
  trace("Đã xây dựng thông tin ngữ cảnh và nguồn.");
- const p=requestPayload(thread,userId,opts.settings,opts.thinking,sources);
+ const p=requestPayload(thread,userId,opts.settings,opts.thinking,sources,opts);
  trace("Đang gửi yêu cầu đến mô hình "+opts.settings.model+".");
  let response;
  try{response=await post(p,opts);}
- catch(e){if(opts.thinking&&[400,422].includes(e.status)){trace("Model không chấp nhận tham số deep thinking; thử lại không có tham số.");response=await post(requestPayload(thread,userId,opts.settings,false,sources),opts);}else throw e;}
+ catch(e){if(opts.thinking&&[400,422].includes(e.status)){trace("Model không chấp nhận tham số deep thinking; thử lại không có tham số.");response=await post(requestPayload(thread,userId,opts.settings,false,sources,opts),opts);}else throw e;}
  trace("Đang nhận phản hồi streaming từ API.");
  await consume(response,assistant,opts);
  trace("Hoàn thành phản hồi Unicode.");
