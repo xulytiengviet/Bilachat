@@ -7,16 +7,16 @@ const $=id=>document.getElementById(id);
 const K_THREADS="bilachat_v2_threads",K_SETTINGS="bilachat_v2_settings",K_CURRENT="bilachat_v2_current",K_API="bilachat_v2_api_key",K_SEARCH="bilachat_v2_search_key";
 const defaults={provider:"deepseek",url:"https://api.deepseek.com/chat/completions",model:"deepseek-flash",temperature:0.7,maxTokens:4096,rememberKey:false,readerConsent:false,theme:"light",locale:"vi"};
 const words={
-vi:{newChat:"Cuộc trò chuyện mới",searchChats:"Tìm cuộc trò chuyện...",recent:"Gần đây",export:"Xuất dữ liệu ZIP",import:"Nhập dữ liệu ZIP",settings:"Cài đặt & API",notConnected:"Chưa cấu hình",greeting:"Hôm nay bạn cần BilaChat giúp gì?",tagline:"Trò chuyện với AI bằng tiếng Việt · CVNSS4.0 xử lý · Unicode hiển thị",prompt1:"Giải thích CVNSS4.0",prompt2:"Viết mã Python",prompt3:"Phân tích kiến trúc AI",prompt4:"Soạn thảo nội dung",compose:"Nhắn tin cho BilaChat...",attach:"Đính kèm",thinking:"Suy nghĩ sâu",webSearch:"Tìm kiếm",voice:"Giọng nói",disclaimer:"BilaChat có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.",settingsTitle:"Cài đặt BilaChat",settingsSubtitle:"API thuộc quyền kiểm soát của bạn, không lưu trên GitHub.",configured:"Đã nhập khóa",processing:"Đang xử lý",done:"Hoàn tất",thinkingTitle:"Nhật ký xử lý · CVNSS4.0",sources:"Nguồn tham khảo",edit:"Sửa câu hỏi",regenerate:"Tạo lại",copy:"Sao chép",speak:"Đọc to"},
-en:{newChat:"New chat",searchChats:"Search chats...",recent:"Recent",export:"Export ZIP",import:"Import ZIP",settings:"Settings & API",notConnected:"Not configured",greeting:"How can BilaChat help today?",tagline:"Vietnamese AI · CVNSS4.0 processing · Unicode responses",prompt1:"Explore CVNSS4.0",prompt2:"Write Python code",prompt3:"Analyze AI architecture",prompt4:"Draft a message",compose:"Message BilaChat...",attach:"Attach",thinking:"Deep think",webSearch:"Search",voice:"Voice",disclaimer:"BilaChat can make mistakes. Verify important information.",settingsTitle:"BilaChat Settings",settingsSubtitle:"Your API, your control. No credentials on GitHub.",configured:"Key entered",processing:"Generating",done:"Done",thinkingTitle:"Processing trace · CVNSS4.0",sources:"References",edit:"Edit",regenerate:"Regenerate",copy:"Copy",speak:"Read aloud"},
-zh:{newChat:"新对话",searchChats:"搜索对话...",recent:"最近",export:"导出 ZIP",import:"导入 ZIP",settings:"设置与 API",notConnected:"未配置",greeting:"今天需要 BilaChat 帮什么？",tagline:"越南语 AI · CVNSS4.0 处理 · Unicode 回答",prompt1:"了解 CVNSS4.0",prompt2:"编写 Python",prompt3:"分析 AI 架构",prompt4:"撰写内容",compose:"发送消息给 BilaChat...",attach:"附件",thinking:"深度思考",webSearch:"搜索",voice:"语音",disclaimer:"BilaChat 可能出错，请核实重要信息。",settingsTitle:"BilaChat 设置",settingsSubtitle:"API 由您控制，不保存在 GitHub。",configured:"已输入密钥",processing:"处理中",done:"已完成",thinkingTitle:"处理日志 · CVNSS4.0",sources:"参考来源",edit:"编辑",regenerate:"重新生成",copy:"复制",speak:"朗读"}};
+vi:{newChat:"Cuộc trò chuyện mới",searchChats:"Tìm cuộc trò chuyện...",recent:"Gần đây",export:"Xuất dữ liệu ZIP",import:"Nhập dữ liệu ZIP",settings:"Cài đặt & API",notConnected:"Chưa cấu hình",greeting:"Hôm nay bạn cần BilaChat giúp gì?",tagline:"Trò chuyện với AI bằng tiếng Việt · CVNSS4.0 xử lý · Unicode hiển thị",prompt1:"Giải thích CVNSS4.0",prompt2:"Viết mã Python",prompt3:"Phân tích kiến trúc AI",prompt4:"Soạn thảo nội dung",compose:"Nhắn tin cho BilaChat...",attach:"Đính kèm",thinking:"Suy nghĩ sâu",webSearch:"Tìm kiếm",voice:"Giọng nói",disclaimer:"BilaChat có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.",settingsTitle:"Cài đặt BilaChat",settingsSubtitle:"API thuộc quyền kiểm soát của bạn, không lưu trên GitHub.",configured:"Đã nhập khóa",processing:"Đang xử lý",done:"Hoàn tất",thinkingTitle:"Suy nghĩ DeepSeek · CVNSS4.0",logTitle:"Nhật ký BilaChat · CVNSS4.0",sources:"Nguồn tham khảo",edit:"Sửa câu hỏi",regenerate:"Tạo lại",copy:"Sao chép",speak:"Đọc to"},
+en:{newChat:"New chat",searchChats:"Search chats...",recent:"Recent",export:"Export ZIP",import:"Import ZIP",settings:"Settings & API",notConnected:"Not configured",greeting:"How can BilaChat help today?",tagline:"Vietnamese AI · CVNSS4.0 processing · Unicode responses",prompt1:"Explore CVNSS4.0",prompt2:"Write Python code",prompt3:"Analyze AI architecture",prompt4:"Draft a message",compose:"Message BilaChat...",attach:"Attach",thinking:"Deep think",webSearch:"Search",voice:"Voice",disclaimer:"BilaChat can make mistakes. Verify important information.",settingsTitle:"BilaChat Settings",settingsSubtitle:"Your API, your control. No credentials on GitHub.",configured:"Key entered",processing:"Generating",done:"Done",thinkingTitle:"DeepSeek reasoning · CVNSS4.0",logTitle:"BilaChat activity log · CVNSS4.0",sources:"References",edit:"Edit",regenerate:"Regenerate",copy:"Copy",speak:"Read aloud"},
+zh:{newChat:"新对话",searchChats:"搜索对话...",recent:"最近",export:"导出 ZIP",import:"导入 ZIP",settings:"设置与 API",notConnected:"未配置",greeting:"今天需要 BilaChat 帮什么？",tagline:"越南语 AI · CVNSS4.0 处理 · Unicode 回答",prompt1:"了解 CVNSS4.0",prompt2:"编写 Python",prompt3:"分析 AI 架构",prompt4:"撰写内容",compose:"发送消息给 BilaChat...",attach:"附件",thinking:"深度思考",webSearch:"搜索",voice:"语音",disclaimer:"BilaChat 可能出错，请核实重要信息。",settingsTitle:"BilaChat 设置",settingsSubtitle:"API 由您控制，不保存在 GitHub。",configured:"已输入密钥",processing:"处理中",done:"已完成",thinkingTitle:"DeepSeek 思考 · CVNSS4.0",logTitle:"BilaChat 处理日志 · CVNSS4.0",sources:"参考来源",edit:"编辑",regenerate:"重新生成",copy:"复制",speak:"朗读"}};
 function parse(v,f){try{return JSON.parse(v)||f}catch(_){return f}}
 let settings=Object.assign({},defaults,parse(localStorage.getItem(K_SETTINGS),{}));
 let apiKey=(settings.rememberKey?localStorage.getItem(K_API):sessionStorage.getItem(K_API))||"";
 let searchKey=sessionStorage.getItem(K_SEARCH)||"";
 let threads=(parse(localStorage.getItem(K_THREADS),[])||[]).map(C.normalizeThread).filter(Boolean);
 let currentId=localStorage.getItem(K_CURRENT)||null;
-let attached=[],thinking=false,searching=false,busy=false,controller=null,recognition=null,micStream=null,micCtx=null,micFrame=null;
+let attached=[],thinking=settings.provider==="deepseek",searching=false,busy=false,controller=null,recognition=null,micStream=null,micCtx=null,micFrame=null;
 const t=k=>(words[settings.locale]||words.vi)[k]||words.vi[k]||k;
 const nodeEl=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;};
 function toast(message){const el=$("toast");el.textContent=message;el.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.hidden=true,4600);}
@@ -56,10 +56,19 @@ function showMessage(th,node){
   if(node.attachments?.length){const list=nodeEl("div","message-attachments");for(const a of node.attachments)list.append(nodeEl("span","attach-tag","▧ "+a.name));content.append(list);}
   content.append(nodeEl("div","bubble-user",node.content));
  }else{
-  if(node.trace?.length){const box=nodeEl("details","reason-box");box.open=busy&&th.selected===node.id;
-   box.append(nodeEl("summary","", "✧ "+t("thinkingTitle")+" · "+(busy&&th.selected===node.id?t("processing"):t("done"))));
+  if(node.thinkingRequested||node.reasoningReceived){
+   const modelBox=nodeEl("details","reason-box model-reason");
+   modelBox.open=!!node.reasoningReceived||busy&&th.selected===node.id;
+   modelBox.append(nodeEl("summary","", "✧ "+t("thinkingTitle")+" · "+(busy&&th.selected===node.id?t("processing"):t("done"))));
+   const status=node.reasoningError||(!node.reasoningReceived?(busy?"Đang chờ dữ liệu reasoning_content từ API…":"API không trả về reasoning_content trong lượt này."):"Đang chuyển đổi CVNSS4.0…");
+   modelBox.append(nodeEl("pre","reason-model",node.reasoningCvss||status));
+   modelBox.append(nodeEl("div","reason-note","Nội dung reasoning do nhà cung cấp API trả về. Chỉ chuyển mã nếu có dữ liệu; không mô phỏng suy nghĩ. Chữ tiếng Anh và ký hiệu không thuộc CVNSS4.0 được giữ nguyên."));
+   content.append(modelBox);
+  }
+  if(node.trace?.length){const box=nodeEl("details","reason-box trace-box");box.open=busy&&th.selected===node.id&&!node.reasoningReceived;
+   box.append(nodeEl("summary","", "◷ "+t("logTitle")+" · "+(busy&&th.selected===node.id?t("processing"):t("done"))));
    box.append(nodeEl("pre","reason-content",encodeTrace(node.trace)));
-   box.append(nodeEl("div","reason-note","Chỉ hiển thị nhật ký thao tác công khai được mã hóa, không phải suy luận nội bộ của mô hình."));
+   box.append(nodeEl("div","reason-note","Nhật ký thao tác của giao diện BilaChat, được mã hóa CVNSS4.0; tách biệt với reasoning_content của mô hình."));
    content.append(box);}
   const answer=nodeEl("div","answer-content");if(busy&&th.selected===node.id){answer.textContent=node.content;answer.append(nodeEl("span","cursor"));}else renderMd(node.content,answer);content.append(answer);
   if(node.sources?.length){const box=nodeEl("div","sources");box.append(nodeEl("strong","",t("sources")));for(const source of node.sources){const u=C.safeUrl(source.url);if(!u)continue;const a=nodeEl("a","source-link",source.title);a.href=u;a.target="_blank";a.rel="noopener noreferrer nofollow";box.append(a);}content.append(box);}
@@ -87,13 +96,14 @@ function regenerate(id){if(busy)return;const th=current(),n=th.nodes.find(x=>x.i
 function newChat(){if(busy)return toast("Vui lòng dừng phản hồi trước.");const th=C.newThread();threads.unshift(th);currentId=th.id;store();render();closeNav();$("promptInput").focus();}
 function showStreaming(n){const card=document.querySelector('[data-node-id="'+n.id+'"]');if(!card)return;const el=card.querySelector(".answer-content");if(el){el.textContent=n.content;el.append(nodeEl("span","cursor"));}scrollBottom(false);}
 function showTrace(n){const card=document.querySelector('[data-node-id="'+n.id+'"]');const pre=card?.querySelector(".reason-content");if(pre)pre.textContent=encodeTrace(n.trace);}
+function showReasoning(n){const card=document.querySelector('[data-node-id="'+n.id+'"]');const pre=card?.querySelector(".reason-model");if(pre)pre.textContent=n.reasoningCvss||n.reasoningError||"Đang chờ CVNSS4.0…";scrollBottom(false);}
 async function generate(th,userId){
  if(busy)return;
- const n=C.addNode(th,"assistant","",userId,{trace:thinking?["Đã tiếp nhận câu hỏi Unicode và tạo yêu cầu xử lý."]:[],sources:[]});
+ const n=C.addNode(th,"assistant","",userId,{trace:thinking?["Đã tiếp nhận câu hỏi Unicode và tạo yêu cầu xử lý."]:[],sources:[],thinkingRequested:thinking,reasoningCvss:"",reasoningReceived:false});
  busy=true;controller=new AbortController();$("sendBtn").hidden=true;$("stopBtn").hidden=false;render();
  const timer=setTimeout(()=>controller?.abort(),150000);
  try{
-  await E.generate(th,userId,n,{settings:Object.assign({},settings),apiKey,searchKey,thinking,searching,readerConsent:settings.readerConsent,signal:controller.signal,onTrace:s=>{if(thinking){n.trace.push(s);showTrace(n);}},onToken:()=>showStreaming(n),onWarning:toast});
+  await E.generate(th,userId,n,{settings:Object.assign({},settings),apiKey,searchKey,thinking,searching,readerConsent:settings.readerConsent,signal:controller.signal,onTrace:s=>{if(thinking){n.trace.push(s);showTrace(n);}},onToken:()=>showStreaming(n),onReasoning:()=>showReasoning(n),onWarning:toast});
  }catch(e){
   if(e.name==="AbortError"){if(!n.content)n.content="Đã dừng tạo phản hồi.";if(thinking)n.trace.push("Yêu cầu dừng hoặc đã quá thời gian.");}
   else{if(thinking)n.trace.push("Lỗi: "+String(e.message).slice(0,120));n.content=(n.content?n.content+"\n\n":"")+"⚠ Không thể hoàn thành yêu cầu.\n\n"+String(e.message||e).slice(0,620);}
@@ -202,6 +212,6 @@ function wire(){
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();newChat();}if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key.toLowerCase()==="f"){e.preventDefault();$("shell").classList.add("sidebar-open");$("filterChats").focus();}if(e.key==="Escape")closeNav();});
  window.addEventListener("storage",e=>{if(e.key===K_THREADS&&!busy){threads=(parse(e.newValue,[])||[]).map(C.normalizeThread).filter(Boolean);render();}});
 }
-wire();render();
+wire();$("thinkBtn").classList.toggle("active",thinking);$("thinkBtn").setAttribute("aria-pressed",String(thinking));render();
 if(CV){try{if(!CV.selfTest().ok)toast("Cảnh báo: CVNSS4.0 selfTest chưa đạt.");}catch(e){toast("CVNSS4.0 lỗi: "+e.message);}}else toast("Không tải được CVNSS4.0, nhật ký sẽ dùng Unicode.");
 })();
