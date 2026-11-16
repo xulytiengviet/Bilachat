@@ -58,3 +58,21 @@ BilaChat phát triển dựa trên tệp minh họa Bilabot được cung cấp 
 **Bảo mật:** Nếu vô tình để lộ API key trong ảnh, logs hoặc bài đăng, hãy **thu hồi ngay và tạo khóa khác**, kể cả khi khóa còn hoạt động. Không gửi khóa qua chat. Khi mở lại Cài đặt, khóa luôn được che mặc định. Lịch sử ZIP không xuất khóa.
 
 Nguồn: [DeepSeek Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/), [Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/), [User Balance](https://api-docs.deepseek.com/api/get-user-balance/), [Web Tools](https://api-docs.deepseek.com/guides/web_tools/).
+
+
+## Thinking → CVNSS4.0: reasoning riêng, câu trả lời Unicode (16/11/2026)
+
+Theo [DeepSeek Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/) và [Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/), nếu bật `thinking.type=enabled`, API có thể gửi các chunk `choices[0].delta.reasoning_content` khác với `choices[0].delta.content`.
+
+- **Suy nghĩ DeepSeek · CVNSS4.0**: trình duyệt ghép toàn bộ các mảnh `reasoning_content` (bao gồm khi âm tiết tiếng Việt bị cắt giữa các mảnh), rồi chuyển bằng `CVNSSConverter.fromCqn(text.normalize('NFC')).cvss`. Dữ liệu CVNSS hiển thị dần, tối đa 120.000 ký tự để tránh tràn bộ nhớ. Không lưu nguyên bản reasoning tiếng Việt vào lịch sử; chỉ lưu kết quả mã hóa CVNSS.
+- **Nhật ký BilaChat · CVNSS4.0**: thông báo có thật về yêu cầu, nhận dữ liệu, gọi công cụ web — được tạo từ trạng thái ứng dụng, **không phải reasoning của DeepSeek**. Luôn gắn nhãn riêng.
+- **Câu trả lời**: chỉ lấy `choices[0].delta.content`, giữ nguyên nội dung Unicode tiếng Việt và chuẩn hóa NFC. Không cố giải mã CVNSS ngược về tiếng Việt, vì codec có ánh xạ nhiều-một.
+- Nếu API không trả về `reasoning_content`, ứng dụng ghi đúng: **“API không trả về reasoning_content trong lượt này.”** Không mô phỏng suy luận và không trộn nhật ký thao tác với suy nghĩ của model.
+- Codec CVNSS4.0 chỉ định nghĩa biến đổi cho tiếng Việt; cụm tiếng Anh, mã lập trình và ký hiệu ngoài miền mã hóa sẽ được giữ nguyên. Lời nhắc có thể khuyến khích reasoning tiếng Việt, nhưng không bảo đảm mô hình sẽ luôn dùng tiếng Việt.
+- Chế độ **Suy nghĩ sâu** được bật mặc định khi chạy với cấu hình DeepSeek; người dùng vẫn có thể tắt bằng nút ở ô nhập.
+
+### Kiểm thử
+
+`tests/engine.test.cjs` mô phỏng DeepSeek streaming có các trường `reasoning_content`, `content`, `server_tool_event`, và `annotations` để xác minh mã hóa reasoning, Unicode answer, trích dẫn, trường hợp trả về JSON và lưu lịch sử. `tests/core.test.cjs` kiểm tra chuẩn hóa nhánh chat và codec.
+
+**Bản chất:** hiển thị `reasoning_content` có thể lấy được từ API **không** có nghĩa BilaChat có thể đọc được mọi suy nghĩ nội bộ không được model tiết lộ. CVNSS4.0 là phép biểu diễn; không chứng minh AI thực hiện suy luận bằng CVNSS4.0.
