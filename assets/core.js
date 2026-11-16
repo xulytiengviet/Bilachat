@@ -11,7 +11,7 @@ function newThread(){return {id:uid(),title:"Cuộc trò chuyện mới",created
 function addNode(thread,role,content,parentId,extra){
   if(!["user","assistant"].includes(role))throw Error("Invalid role");
   if(parentId!==null&&!thread.nodes.some(n=>n.id===parentId))throw Error("Missing parent");
-  const node={id:uid(),parentId:parentId??null,role,content:String(content||""),createdAt:stamp(),trace:[],sources:[],attachments:[],...extra};
+  const node={id:uid(),parentId:parentId??null,role,content:String(content||""),createdAt:stamp(),trace:[],sources:[],attachments:[],reasoningCvss:"",reasoningReceived:false,thinkingRequested:false,...extra};
   thread.nodes.push(node);thread.selected=node.id;thread.updatedAt=stamp();
   if(role==="user"&&thread.nodes.filter(n=>n.role==="user").length===1)thread.title=content.trim().replace(/\s+/g," ").slice(0,52)||"Cuộc trò chuyện mới";
   return node;
@@ -32,7 +32,7 @@ function normalizeThread(t){
     const id=String(n.id),parentId=n.parentId===null?null:String(n.parentId||"");
     if(parentId!==null&&!ids.has(parentId))continue;
     const limit=150000;
-    o.nodes.push({id,parentId,role:n.role,content:String(n.content||"").slice(0,limit),createdAt:String(n.createdAt||stamp()),trace:Array.isArray(n.trace)?n.trace.slice(0,40).map(x=>String(x).slice(0,500)):[],sources:Array.isArray(n.sources)?n.sources.slice(0,10).filter(x=>x&&typeof x==="object").map(x=>({title:String(x.title||"Nguồn").slice(0,150),url:String(x.url||"").slice(0,2048)})):[],attachments:Array.isArray(n.attachments)?n.attachments.slice(0,8).map(x=>({name:String(x.name||"tệp").slice(0,150),type:String(x.type||""),text:String(x.text||"").slice(0,25000),dataUrl:typeof x.dataUrl==="string"&&x.dataUrl.length<=1500000?x.dataUrl:""})):[]});
+    o.nodes.push({id,parentId,role:n.role,content:String(n.content||"").slice(0,limit),createdAt:String(n.createdAt||stamp()),trace:Array.isArray(n.trace)?n.trace.slice(0,40).map(x=>String(x).slice(0,500)):[],reasoningCvss:String(n.reasoningCvss||"").slice(0,120000),reasoningReceived:!!n.reasoningReceived,thinkingRequested:!!n.thinkingRequested,reasoningTruncated:!!n.reasoningTruncated,reasoningError:String(n.reasoningError||"").slice(0,160),sources:Array.isArray(n.sources)?n.sources.slice(0,10).filter(x=>x&&typeof x==="object").map(x=>({title:String(x.title||"Nguồn").slice(0,150),url:String(x.url||"").slice(0,2048)})):[],attachments:Array.isArray(n.attachments)?n.attachments.slice(0,8).map(x=>({name:String(x.name||"tệp").slice(0,150),type:String(x.type||""),text:String(x.text||"").slice(0,25000),dataUrl:typeof x.dataUrl==="string"&&x.dataUrl.length<=1500000?x.dataUrl:""})):[]});
     ids.add(id);
   }
   if(!ids.has(o.selected))o.selected=o.nodes.length?o.nodes[o.nodes.length-1].id:null;
