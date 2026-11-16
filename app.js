@@ -137,7 +137,8 @@ async function importZip(file){
 function speak(text){
  if(!window.speechSynthesis)return toast("Trình duyệt không hỗ trợ TTS.");speechSynthesis.cancel();
  const u=new SpeechSynthesisUtterance(String(text).replace(/[*#_~>|]/g," ").slice(0,6000));u.lang="vi-VN";const v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith("vi"));if(v)u.voice=v;
- u.onstart=()=>toast("Đọc to bằng trình tổng hợp của trình duyệt (không đo phổ âm đầu ra).");speechSynthesis.speak(u);
+ u.onstart=()=>{toast("Đang đọc: hiệu ứng thanh âm minh họa, không phải phổ đo từ TTS.");const cv=$("waveform"),g=cv.getContext("2d");cv.hidden=false;let tick=0;const animate=()=>{if(!speechSynthesis.speaking||recognition){cv.hidden=true;return;}tick++;g.clearRect(0,0,cv.width,cv.height);g.fillStyle=settings.theme==="dark"?"#eee":"#222";for(let i=0;i<22;i++){const h=3+14*(0.5+0.5*Math.sin(tick*.21+i*.75));g.fillRect(i*4,14-h/2,2,h);}requestAnimationFrame(animate);};animate();};
+ u.onend=u.onerror=()=>{if(!recognition)$("waveform").hidden=true;};speechSynthesis.speak(u);
 }
 function stopMic(){
  if(recognition){try{recognition.stop()}catch(_){}recognition=null;}
