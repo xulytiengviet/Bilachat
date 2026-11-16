@@ -65,14 +65,14 @@ async function consume(res,assistant,opts){
   for(const step of (msg?.server_tool_calls||[]))for(const call of (step.calls||[])){for(const source of (call.sources||[]))addSource(source);if(call.page)addSource(call.page);}
  };
  if((res.headers.get("content-type")||"").includes("application/json")){
-  const j=await res.json();const message=j.choices?.[0]?.message||{};ingest(message);assistant.content=String(message.content||j.output_text||"");opts.onToken?.(assistant);return;
+  const j=await res.json();if(j.error)throw Error(String(j.error.message||"API response error"));const message=j.choices?.[0]?.message||{};ingest(message);assistant.content=String(message.content||j.output_text||"");opts.onToken?.(assistant);return;
  }
  for await(const event of Core.parseSSE(res.body)){
   if(event.done)break;const j=event.data;if(j.error)throw Error(String(j.error.message||"Lỗi khi streaming"));
   const choice=j.choices?.[0]||{};const delta=choice.delta||choice.message||{};
-  ingest(delta);const event=choice.server_tool_event;
-  if(event?.type==="call_completed"){for(const source of (event.call?.sources||[]))addSource(source);if(event.call?.page)addSource(event.call.page);}
-  if(event?.type==="call_started")makeTrace(opts.onTrace,"Mô hình đang dùng công cụ web được cấp phép.");
+  ingest(delta);const toolEvent=choice.server_tool_event;
+  if(toolEvent?.type==="call_completed"){for(const source of (toolEvent.call?.sources||[]))addSource(source);if(toolEvent.call?.page)addSource(toolEvent.call.page);}
+  if(toolEvent?.type==="call_started")makeTrace(opts.onTrace,"Mô hình đang dùng công cụ web được cấp phép.");
   if(typeof delta.content==="string")assistant.content+=delta.content;
   else if(Array.isArray(delta.content))assistant.content+=delta.content.filter(v=>v.type==="text").map(v=>v.text||"").join("");
   else if(typeof j.output_text==="string")assistant.content+=j.output_text;
@@ -111,5 +111,5 @@ async function readAttachment(file){
  else throw Error("Định dạng chưa hỗ trợ; chọn PDF, hình ảnh hoặc tệp văn bản.");
  return obj;
 }
-root.BilaEngine=Object.freeze({searchSources,requestPayload,generate,readAttachment,post});
+root.BilaEngine=Object.freeze({searchSources,requestPayload,generate,readAttachment,post,consume});
 })(window);
