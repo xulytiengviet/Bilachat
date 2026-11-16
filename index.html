@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
   <link rel="stylesheet" href="./styles.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.2/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
@@ -98,7 +98,7 @@
     <div class="dialog-content">
       <div class="field-grid">
         <label class="field"><span>Nhà cung cấp API</span><select id="provider"><option value="deepseek">DeepSeek</option><option value="openrouter">OpenRouter</option><option value="openai">OpenAI-compatible</option></select></label>
-        <label class="field"><span>Model ID</span><input id="modelId" spellcheck="false" placeholder="deepseek-chat"></label>
+        <label class="field"><span>Model ID</span><input id="modelId" spellcheck="false" placeholder="deepseek-flash"></label>
         <label class="field field-wide"><span>Chat Completions endpoint (HTTPS)</span><input id="apiUrl" spellcheck="false" placeholder="https://api.deepseek.com/chat/completions"></label>
         <label class="field field-wide"><span>API Key</span><span class="secret-row"><input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button type="button" class="inline-btn" id="toggleKey">Hiện</button></span></label>
         <label class="field"><span>Temperature</span><input id="temperature" type="number" min="0" max="2" step="0.1" value="0.7"></label>
@@ -107,7 +107,7 @@
       <label class="check-row"><input type="checkbox" id="rememberKey"><span>Nhớ API key trên thiết bị này <small>(localStorage — không nên dùng trên máy chung)</small></span></label>
       <div class="section-divider"></div>
       <h3>Tìm kiếm và nội dung liên kết</h3>
-      <label class="field"><span>Tavily Search API key (tùy chọn)</span><input id="searchKey" type="password" autocomplete="off" placeholder="tvly-..."></label>
+      <label class="field"><span>Tavily Search API key (chỉ cần cho API không phải DeepSeek)</span><input id="searchKey" type="password" autocomplete="off" placeholder="tvly-..."></label>
       <label class="check-row"><input id="readerConsent" type="checkbox"><span>Cho phép đọc URL qua dịch vụ Jina Reader <small>(URL được chuyển tới bên thứ ba)</small></span></label>
       <div class="section-divider"></div>
       <h3>Giao diện</h3>
