@@ -20,5 +20,8 @@ jobs:
           node --check assets/engine.js
           node --check app.js
           node --check tests/core.test.cjs
+          node --check tests/engine.test.cjs
       - name: Converter and conversation tests
-        run: node tests/core.test.cjs
+        run: |
+          node tests/core.test.cjs
+          node tests/engine.test.cjs
