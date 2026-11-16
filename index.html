@@ -101,6 +101,7 @@
         <label class="field"><span>Model ID</span><input id="modelId" spellcheck="false" placeholder="deepseek-flash"></label>
         <label class="field field-wide"><span>Chat Completions endpoint (HTTPS)</span><input id="apiUrl" spellcheck="false" placeholder="https://api.deepseek.com/chat/completions"></label>
         <label class="field field-wide"><span>API Key</span><span class="secret-row"><input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button type="button" class="inline-btn" id="toggleKey">Hiện</button></span></label>
+        <div class="field-wide deepseek-guide"><small>DeepSeek: <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener noreferrer">Tạo / thu hồi API key</a> · <a href="https://platform.deepseek.com/transactions" target="_blank" rel="noopener noreferrer">Giao dịch & số dư</a> · <a href="https://api-docs.deepseek.com/api/create-chat-completion/" target="_blank" rel="noopener noreferrer">Tài liệu Chat API</a>. Không dùng trang Transactions làm endpoint và không chia sẻ khóa qua ảnh chụp.</small></div>
         <label class="field"><span>Temperature</span><input id="temperature" type="number" min="0" max="2" step="0.1" value="0.7"></label>
         <label class="field"><span>Max output tokens</span><input id="maxTokens" type="number" min="64" max="32768" step="64" value="4096"></label>
       </div>
@@ -118,7 +119,7 @@
       <p class="security-note">⚠ API key được gửi trực tiếp từ trình duyệt tới endpoint đã cấu hình. GitHub Pages không có máy chủ để giữ bí mật khóa. Tính năng API/Web cần nhà cung cấp cho phép CORS. Bản xuất ZIP không chứa khóa.</p>
       <div class="test-result" id="testResult" role="status"></div>
     </div>
-    <div class="dialog-footer"><button type="button" class="secondary-btn" id="testApi">Thử kết nối</button><button type="submit" value="save" class="primary-btn">Lưu cài đặt</button></div>
+    <div class="dialog-footer"><button type="button" class="secondary-btn" id="testApi">Kiểm tra API & số dư</button><button type="submit" value="save" class="primary-btn">Lưu cài đặt</button></div>
   </form>
 </dialog>
 <input id="zipInput" type="file" accept=".zip" hidden>
