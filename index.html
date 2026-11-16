@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="BilaChat — Vietnamese AI Chat, CVNSS4.0 processing trace and Unicode answers.">
+  <title>BilaChat — Vietnamese AI Chat</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23171517'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='35' font-family='Arial' font-weight='700' fill='white'%3EB%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.2/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script defer src="./assets/cvnss-converter.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+<div class="shell" id="shell">
+  <aside class="sidebar" id="sidebar" aria-label="Conversation sidebar">
+    <div class="side-head">
+      <div class="brand"><span class="brand-mark">B</span><span>BilaChat</span><span class="brand-version">2.0</span></div>
+      <button class="icon-btn mobile-close" id="closeSidebar" title="Đóng menu" aria-label="Close sidebar">×</button>
+    </div>
+    <button class="new-chat" id="newChat"><span class="plus">＋</span><span data-i18n="newChat">Cuộc trò chuyện mới</span><kbd>Ctrl K</kbd></button>
+    <div class="side-search"><span aria-hidden="true">⌕</span><input id="filterChats" placeholder="Tìm cuộc trò chuyện..." data-i18n-placeholder="searchChats" aria-label="Search chats"></div>
+    <div class="side-label" data-i18n="recent">Gần đây</div>
+    <nav id="chatList" class="chat-list" aria-label="Saved conversations"></nav>
+    <div class="side-bottom">
+      <button class="side-action" id="exportBtn"><span>⇩</span><span data-i18n="export">Xuất dữ liệu ZIP</span></button>
+      <button class="side-action" id="importBtn"><span>⇧</span><span data-i18n="import">Nhập dữ liệu ZIP</span></button>
+      <button class="side-action" id="settingsBtn"><span>⚙</span><span data-i18n="settings">Cài đặt & API</span></button>
+      <div class="side-credit">CVNSS4.0 · Audit-safe v5</div>
+    </div>
+  </aside>
+  <div class="mobile-scrim" id="scrim"></div>
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn mobile-menu" id="openSidebar" aria-label="Open navigation">☰</button>
+        <div class="model-switch"><span class="top-model" id="modelLabel">BilaChat</span><span class="chevron">⌄</span></div>
+      </div>
+      <div class="top-right">
+        <span id="connectionState" class="connection" title="API connection">● <span data-i18n="notConnected">Chưa cấu hình</span></span>
+        <button class="icon-btn" id="topSettings" title="Cài đặt API" aria-label="Settings">⚙</button>
+        <button class="icon-btn" id="topNew" title="Cuộc trò chuyện mới" aria-label="New chat">✎</button>
+      </div>
+    </header>
+    <section class="chat-scroll" id="chatScroll" aria-live="polite" aria-label="Messages">
+      <div class="empty-view" id="emptyView">
+        <div class="empty-logo">B</div>
+        <h1 data-i18n="greeting">Hôm nay bạn cần BilaChat giúp gì?</h1>
+        <p class="empty-tagline" data-i18n="tagline">Trò chuyện với AI bằng tiếng Việt · CVNSS4.0 xử lý · Unicode hiển thị</p>
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="Giải thích CVNSS4.0 và cho một ví dụ minh họa."><span>◈</span><span data-i18n="prompt1">Giải thích CVNSS4.0</span><span>↗</span></button>
+          <button class="suggestion" data-prompt="Viết một đoạn mã Python chuẩn hóa văn bản Unicode tiếng Việt NFC."><span>⌘</span><span data-i18n="prompt2">Viết mã Python</span><span>↗</span></button>
+          <button class="suggestion" data-prompt="Phân tích ưu và nhược điểm của ứng dụng AI hoạt động trên GitHub Pages."><span>▤</span><span data-i18n="prompt3">Phân tích kiến trúc AI</span><span>↗</span></button>
+          <button class="suggestion" data-prompt="Soạn một email chuyên nghiệp bằng tiếng Việt, giọng văn trang trọng."><span>✎</span><span data-i18n="prompt4">Soạn thảo nội dung</span><span>↗</span></button>
+        </div>
+      </div>
+      <div class="messages" id="messages" hidden></div>
+      <div id="bottomAnchor"></div>
+    </section>
+    <div class="dock">
+      <div class="attachment-list" id="attachments" hidden></div>
+      <div class="composer-card" id="dropZone">
+        <textarea id="promptInput" rows="1" placeholder="Nhắn tin cho BilaChat..." data-i18n-placeholder="compose" aria-label="Message"></textarea>
+        <div class="composer-actions">
+          <div class="tools-left">
+            <label class="tool-btn" title="Đính kèm tệp"><span>＋</span><span class="tool-text" data-i18n="attach">Đính kèm</span><input id="fileInput" type="file" multiple accept=".txt,.md,.csv,.json,.html,.xml,.js,.ts,.py,.pdf,image/*" hidden></label>
+            <button class="tool-btn" id="thinkBtn" aria-pressed="false"><span>✧</span><span data-i18n="thinking">Suy nghĩ sâu</span></button>
+            <button class="tool-btn" id="searchBtn" aria-pressed="false"><span>◎</span><span data-i18n="webSearch">Tìm kiếm</span></button>
+            <button class="tool-btn" id="micBtn" title="Nhập bằng giọng nói" aria-label="Microphone"><span>♩</span><span class="tool-text" data-i18n="voice">Giọng nói</span></button>
+          </div>
+          <div class="tools-right">
+            <canvas id="waveform" width="90" height="28" hidden aria-label="Microphone spectrum"></canvas>
+            <span class="count-hint" id="countHint"></span>
+            <button class="send-btn" id="sendBtn" aria-label="Send" title="Gửi">↑</button>
+            <button class="send-btn stop-btn" id="stopBtn" hidden aria-label="Stop" title="Dừng">■</button>
+          </div>
+        </div>
+      </div>
+      <div class="disclaimer" data-i18n="disclaimer">BilaChat có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.</div>
+    </div>
+  </main>
+</div>
+<dialog id="settingsDialog" class="settings-dialog">
+  <form method="dialog" id="settingsForm">
+    <div class="dialog-head"><div><h2 data-i18n="settingsTitle">Cài đặt BilaChat</h2><p data-i18n="settingsSubtitle">API thuộc quyền kiểm soát của bạn, không lưu trên GitHub.</p></div><button class="icon-btn" value="cancel" aria-label="Close">×</button></div>
+    <div class="dialog-content">
+      <div class="field-grid">
+        <label class="field"><span>Nhà cung cấp API</span><select id="provider"><option value="deepseek">DeepSeek</option><option value="openrouter">OpenRouter</option><option value="openai">OpenAI-compatible</option></select></label>
+        <label class="field"><span>Model ID</span><input id="modelId" spellcheck="false" placeholder="deepseek-chat"></label>
+        <label class="field field-wide"><span>Chat Completions endpoint (HTTPS)</span><input id="apiUrl" spellcheck="false" placeholder="https://api.deepseek.com/chat/completions"></label>
+        <label class="field field-wide"><span>API Key</span><span class="secret-row"><input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..."><button type="button" class="inline-btn" id="toggleKey">Hiện</button></span></label>
+        <label class="field"><span>Temperature</span><input id="temperature" type="number" min="0" max="2" step="0.1" value="0.7"></label>
+        <label class="field"><span>Max output tokens</span><input id="maxTokens" type="number" min="64" max="32768" step="64" value="4096"></label>
+      </div>
+      <label class="check-row"><input type="checkbox" id="rememberKey"><span>Nhớ API key trên thiết bị này <small>(localStorage — không nên dùng trên máy chung)</small></span></label>
+      <div class="section-divider"></div>
+      <h3>Tìm kiếm và nội dung liên kết</h3>
+      <label class="field"><span>Tavily Search API key (tùy chọn)</span><input id="searchKey" type="password" autocomplete="off" placeholder="tvly-..."></label>
+      <label class="check-row"><input id="readerConsent" type="checkbox"><span>Cho phép đọc URL qua dịch vụ Jina Reader <small>(URL được chuyển tới bên thứ ba)</small></span></label>
+      <div class="section-divider"></div>
+      <h3>Giao diện</h3>
+      <div class="field-grid">
+        <label class="field"><span>Chủ đề</span><select id="themeSelect"><option value="light">Sáng · Light</option><option value="dark">Tối · Dark</option></select></label>
+        <label class="field"><span>Ngôn ngữ giao diện</span><select id="localeSelect"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh">中文</option></select></label>
+      </div>
+      <p class="security-note">⚠ API key được gửi trực tiếp từ trình duyệt tới endpoint đã cấu hình. GitHub Pages không có máy chủ để giữ bí mật khóa. Tính năng API/Web cần nhà cung cấp cho phép CORS. Bản xuất ZIP không chứa khóa.</p>
+      <div class="test-result" id="testResult" role="status"></div>
+    </div>
+    <div class="dialog-footer"><button type="button" class="secondary-btn" id="testApi">Thử kết nối</button><button type="submit" value="save" class="primary-btn">Lưu cài đặt</button></div>
+  </form>
+</dialog>
+<input id="zipInput" type="file" accept=".zip" hidden>
+<div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
