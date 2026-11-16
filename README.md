@@ -32,3 +32,29 @@ BilaChat là ứng dụng AI chat chạy tĩnh trên GitHub Pages, giao diện s
 ### Nguồn và giấy phép
 
 BilaChat phát triển dựa trên tệp minh họa Bilabot được cung cấp và bộ `CVNSSConverter.VERSION = 5.0.0-audit-safe`. CVNSS4.0 do Trần Tư Bình và Kiều Trường Lâm đề xuất; tích hợp phần mềm của Long Ngo. MIT (xem LICENSE).
+
+## Cấu hình DeepSeek và trang Transactions (16-11-2026)
+
+**Không dùng** `https://platform.deepseek.com/transactions` làm API endpoint: đây là trang lịch sử giao dịch trong tài khoản DeepSeek, cần đăng nhập, không phải Chat Completions API.
+
+- Quản lý khóa: https://platform.deepseek.com/api_keys
+- Xem giao dịch và khoản nạp: https://platform.deepseek.com/transactions
+- API chat: `https://api.deepseek.com/chat/completions`
+- Model: `deepseek-flash` (tùy nhu cầu có thể dùng `deepseek-v4-pro`).
+- Kiểm tra số dư (qua khóa của chính người dùng trong trình duyệt): `GET https://api.deepseek.com/user/balance` — BilaChat kiểm tra khi nhấn **Kiểm tra API & số dư**, nếu trình duyệt/nhà cung cấp cho phép CORS. Bước tiếp theo dùng một yêu cầu chat ngắn để xác minh model thực sự phản hồi (có thể tính phí nhỏ).
+- Khi dùng DeepSeek, Bật Suy nghĩ sâu gửi `thinking:{type:"enabled"}`, tắt gửi `thinking:{type:"disabled"}`. Tìm kiếm sử dụng công cụ `deepseek_web_search`, đọc URL sử dụng `deepseek_read_url`.
+
+### Khắc phục lỗi
+
+| Lỗi | Ý nghĩa | Cách xử lý |
+| --- | --- | --- |
+| `Cannot access 'event' before initialization` | Lỗi biến trùng phạm vi trong SSE client trước bản vá 16-11-2026. | Cập nhật mã nguồn, tải lại trang bằng **Ctrl+Shift+R**. Kiểm thử ở `tests/engine.test.cjs`. |
+| HTTP 401 | Khóa không còn hợp lệ | Tạo hoặc thay khóa trên DeepSeek Platform. |
+| HTTP 402 | Tài khoản thiếu số dư API | Kiểm tra Transactions / nạp nếu cần; số dư chat web không đồng nghĩa số dư API. |
+| HTTP 400 / 422 | Dữ liệu hoặc tham số chưa tương thích | Kiểm tra endpoint, model, thinking và công cụ. |
+| HTTP 429 | Vượt giới hạn đồng thời | Giảm tần suất gửi yêu cầu. |
+| `Failed to fetch`, CORS | Trình duyệt không nhận được phản hồi API trực tiếp | Kiểm tra mạng/DevTools; nếu do CORS, cần proxy có xác thực và bảo vệ khóa. |
+
+**Bảo mật:** Nếu vô tình để lộ API key trong ảnh, logs hoặc bài đăng, hãy **thu hồi ngay và tạo khóa khác**, kể cả khi khóa còn hoạt động. Không gửi khóa qua chat. Khi mở lại Cài đặt, khóa luôn được che mặc định. Lịch sử ZIP không xuất khóa.
+
+Nguồn: [DeepSeek Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/), [Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/), [User Balance](https://api-docs.deepseek.com/api/get-user-balance/), [Web Tools](https://api-docs.deepseek.com/guides/web_tools/).
