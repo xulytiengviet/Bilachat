@@ -26,3 +26,12 @@ body.dark .brand-mark,body.dark .avatar,body.dark .send-btn,body.dark .primary-b
 /* DeepSeek account and API links beneath the API key field */
 .deepseek-guide{margin-top:-8px;line-height:1.7;color:var(--muted);font-size:11px}
 .deepseek-guide a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+
+/* Dedicated provider reasoning and operational-log panes. Never mix sources. */
+.model-reason{border-left:2px solid var(--text);padding-left:15px}
+.model-reason summary{color:var(--text);font-weight:640}
+.model-reason .reason-model{padding:12px 14px;max-height:330px;overflow:auto;background:var(--soft);border:1px solid var(--border);border-radius:10px;white-space:pre-wrap;word-break:break-word;color:var(--text);font-family:"Cascadia Code",Consolas,monospace;line-height:1.8}
+.trace-box{border-left-color:#cbd1da}
+.trace-box summary{font-weight:510;color:var(--muted)}
+.model-reason[open],.trace-box[open]{margin-bottom:18px}
+body.dark .model-reason .reason-model{background:#24262b}
